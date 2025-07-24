@@ -1,0 +1,725 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CV. Amanah Elektronik API",
+    "description": "RESTful API for electronics rental company - Manage electronic equipment inventory with full CRUD operations",
+    "version": "1.0.0",
+    "contact": {
+      "name": "CV. Amanah Elektronik",
+      "email": "info@amanah-elektronik.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "Equipment",
+      "description": "Equipment management endpoints"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register new user",
+        "description": "Create a new user account",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              },
+              "example": {
+                "username": "johndoe",
+                "email": "john@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully registered user",
+                  "data": {
+                    "user": {
+                      "user_id": 1,
+                      "username": "johndoe",
+                      "email": "john@example.com",
+                      "created_at": "2024-01-01T00:00:00.000Z"
+                    },
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  "errors": null
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Gagal mendaftarkan user!",
+                  "data": null,
+                  "errors": {
+                    "username": ["Username already exists"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate user and receive JWT token",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "username": "johndoe",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully logged in",
+                  "data": {
+                    "user": {
+                      "user_id": 1,
+                      "username": "johndoe",
+                      "email": "john@example.com",
+                      "created_at": "2024-01-01T00:00:00.000Z"
+                    },
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  "errors": null
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Login failed!",
+                  "data": null,
+                  "errors": {
+                    "username": ["Invalid username or password"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/alat": {
+      "get": {
+        "tags": ["Equipment"],
+        "summary": "List all equipment",
+        "description": "Get a list of all available equipment",
+        "operationId": "listEquipment",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved equipment list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentListResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully get alat data",
+                  "data": [
+                    {
+                      "alat_id": 1,
+                      "alat_kategori_id": 1,
+                      "alat_nama": "iPhone 15 Pro",
+                      "alat_deskripsi": "Latest iPhone with pro camera system",
+                      "alat_harga_sewa_perhari": 150000,
+                      "alat_stok": 5
+                    },
+                    {
+                      "alat_id": 2,
+                      "alat_kategori_id": 2,
+                      "alat_nama": "MacBook Pro M3",
+                      "alat_deskripsi": "High performance laptop for professionals",
+                      "alat_harga_sewa_perhari": 250000,
+                      "alat_stok": 3
+                    }
+                  ],
+                  "errors": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Equipment"],
+        "summary": "Create new equipment",
+        "description": "Add new equipment to inventory",
+        "operationId": "createEquipment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEquipmentRequest"
+              },
+              "example": {
+                "alat_kategori_id": 1,
+                "alat_nama": "Samsung Galaxy S24",
+                "alat_deskripsi": "Latest Samsung flagship phone",
+                "alat_harga_sewa_perhari": 120000,
+                "alat_stok": 8
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Equipment successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully created alat data",
+                  "data": {
+                    "alat_id": 3,
+                    "alat_kategori_id": 1,
+                    "alat_nama": "Samsung Galaxy S24",
+                    "alat_deskripsi": "Latest Samsung flagship phone",
+                    "alat_harga_sewa_perhari": 120000,
+                    "alat_stok": 8
+                  },
+                  "errors": null
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Gagal menambahkan data alat!",
+                  "data": null,
+                  "errors": {
+                    "alat_kategori_id": ["Category not found"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/alat/{id}": {
+      "get": {
+        "tags": ["Equipment"],
+        "summary": "Get equipment by ID",
+        "description": "Retrieve specific equipment details",
+        "operationId": "getEquipmentById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Equipment ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved equipment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully get alat data",
+                  "data": {
+                    "alat_id": 1,
+                    "alat_kategori_id": 1,
+                    "alat_nama": "iPhone 15 Pro",
+                    "alat_deskripsi": "Latest iPhone with pro camera system",
+                    "alat_harga_sewa_perhari": 150000,
+                    "alat_stok": 5
+                  },
+                  "errors": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Equipment not found",
+                  "data": null,
+                  "errors": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Equipment"],
+        "summary": "Update equipment",
+        "description": "Update existing equipment details",
+        "operationId": "updateEquipment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Equipment ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEquipmentRequest"
+              },
+              "example": {
+                "alat_nama": "iPhone 15 Pro Max",
+                "alat_harga_sewa_perhari": 180000,
+                "alat_stok": 7
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Equipment successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully updated alat data",
+                  "data": {
+                    "alat_id": 1,
+                    "alat_kategori_id": 1,
+                    "alat_nama": "iPhone 15 Pro Max",
+                    "alat_deskripsi": "Latest iPhone with pro camera system",
+                    "alat_harga_sewa_perhari": 180000,
+                    "alat_stok": 7
+                  },
+                  "errors": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Equipment"],
+        "summary": "Delete equipment",
+        "description": "Remove equipment from inventory",
+        "operationId": "deleteEquipment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Equipment ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Equipment successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully deleted alat data",
+                  "data": null,
+                  "errors": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["username", "email", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Username must be at least 3 characters long"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Valid email address"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "description": "Password must be at least 6 characters long"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Username is required"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Password is required"
+          }
+        }
+      },
+      "CreateEquipmentRequest": {
+        "type": "object",
+        "required": ["alat_kategori_id", "alat_nama", "alat_harga_sewa_perhari", "alat_stok"],
+        "properties": {
+          "alat_kategori_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Category ID (1: Smartphone, 2: Laptop, 3: Camera)"
+          },
+          "alat_nama": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Equipment name"
+          },
+          "alat_deskripsi": {
+            "type": "string",
+            "description": "Equipment description (optional)"
+          },
+          "alat_harga_sewa_perhari": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Daily rental price in IDR"
+          },
+          "alat_stok": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Available stock"
+          }
+        }
+      },
+      "UpdateEquipmentRequest": {
+        "type": "object",
+        "properties": {
+          "alat_kategori_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Category ID (optional)"
+          },
+          "alat_nama": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Equipment name (optional)"
+          },
+          "alat_deskripsi": {
+            "type": "string",
+            "description": "Equipment description (optional)"
+          },
+          "alat_harga_sewa_perhari": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Daily rental price (optional)"
+          },
+          "alat_stok": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Available stock (optional)"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Equipment": {
+        "type": "object",
+        "properties": {
+          "alat_id": {
+            "type": "integer"
+          },
+          "alat_kategori_id": {
+            "type": "integer"
+          },
+          "alat_nama": {
+            "type": "string"
+          },
+          "alat_deskripsi": {
+            "type": "string",
+            "nullable": true
+          },
+          "alat_harga_sewa_perhari": {
+            "type": "integer"
+          },
+          "alat_stok": {
+            "type": "integer"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "$ref": "#/components/schemas/User"
+              },
+              "token": {
+                "type": "string"
+              }
+            }
+          },
+          "errors": {
+            "type": "null"
+          }
+        }
+      },
+      "EquipmentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Equipment"
+          },
+          "errors": {
+            "type": "null"
+          }
+        }
+      },
+      "EquipmentListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Equipment"
+            }
+          },
+          "errors": {
+            "type": "null"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "null"
+          },
+          "errors": {
+            "type": "null"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "null"
+          },
+          "errors": {
+            "type": "null"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "null"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme"
+      }
+    }
+  }
+}
