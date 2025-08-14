@@ -29,7 +29,7 @@ const paramSchema = z.object({
   id: z.string().regex(/^\d+$/, "ID must be a valid number").transform(Number)
 })
 
-alatRouter.get("/", async (c) => {
+alatRouter.get("/", authMiddleware, async (c) => {
   try {
     const result = await db
       .select({
@@ -48,7 +48,7 @@ alatRouter.get("/", async (c) => {
   }
 })
 
-alatRouter.get("/:id", validateParams(paramSchema), async (c) => {
+alatRouter.get("/:id", authMiddleware, validateParams(paramSchema), async (c) => {
   try {
     const { id } = c.get("validatedParams")
     
