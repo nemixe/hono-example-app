@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm"
 import { db } from "../models/database"
 import { alat, alatKategori } from "../models/schema"
 import { validateBody, validateParams } from "../middleware/validation"
+import { authMiddleware } from "../middleware/auth"
 import { successResponse, errorResponse } from "../utils/response"
 
 const alatRouter = new Hono()
@@ -74,7 +75,7 @@ alatRouter.get("/:id", validateParams(paramSchema), async (c) => {
   }
 })
 
-alatRouter.post("/", validateBody(createAlatSchema), async (c) => {
+alatRouter.post("/", authMiddleware, validateBody(createAlatSchema), async (c) => {
   try {
     const validatedData = c.get("validatedData")
     
@@ -111,7 +112,7 @@ alatRouter.post("/", validateBody(createAlatSchema), async (c) => {
   }
 })
 
-alatRouter.patch("/:id", validateParams(paramSchema), validateBody(updateAlatSchema), async (c) => {
+alatRouter.patch("/:id", authMiddleware, validateParams(paramSchema), validateBody(updateAlatSchema), async (c) => {
   try {
     const { id } = c.get("validatedParams")
     const validatedData = c.get("validatedData")
@@ -162,7 +163,7 @@ alatRouter.patch("/:id", validateParams(paramSchema), validateBody(updateAlatSch
   }
 })
 
-alatRouter.delete("/:id", validateParams(paramSchema), async (c) => {
+alatRouter.delete("/:id", authMiddleware, validateParams(paramSchema), async (c) => {
   try {
     const { id } = c.get("validatedParams")
 

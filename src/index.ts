@@ -26,6 +26,18 @@ app.get('/', (c) => {
   })
 })
 
+app.get('/api/health', (c) => {
+  return c.json({
+    success: true,
+    message: 'Service is healthy',
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString()
+    },
+    errors: null
+  })
+})
+
 app.route('/api/auth', authRouter)
 app.route('/api/alat', alatRouter)
 
@@ -38,7 +50,9 @@ app.notFound((c) => {
   }, 404)
 })
 
+const port = parseInt(process.env.PORT || '8000', 10)
+
 export default {
-  port: 8000,
+  port,
   fetch: app.fetch
 }

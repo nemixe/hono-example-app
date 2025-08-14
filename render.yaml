@@ -1,0 +1,36 @@
+services:
+  # Web service for the API
+  - type: web
+    name: amanah-elektronik-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    
+    # Instance configuration
+    plan: free  # Change to 'starter' or higher for production
+    
+    # Health check endpoint
+    healthCheckPath: /api/health
+    
+    # Environment variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true  # Render will generate a secure random value
+      - key: DATABASE_PATH
+        value: /app/data/db.sqlite
+    
+    # Disk for SQLite persistence (requires paid plan)
+    # Uncomment if using paid plan for persistent SQLite storage
+    # disk:
+    #   name: sqlite-data
+    #   mountPath: /app/data
+    #   sizeGB: 1
+
+# PostgreSQL database (alternative to SQLite)
+# Uncomment if you want to use PostgreSQL instead
+# databases:
+#   - name: amanah-db
+#     plan: free  # PostgreSQL is available on free tier
+#     databaseName: amanah_elektronik
+#     user: amanah_user

@@ -2,8 +2,10 @@
   "name": "amanah-electronic",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
     "db:generate": "drizzle-kit generate:sqlite",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "healthcheck": "curl -f http://localhost:${PORT:-8000}/api/health || exit 1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
